@@ -77,31 +77,37 @@
     </head>
     <body>
         <div id="app">
-            <h1>{{ message }}</h1>
-            <form @submit.prevent="generatePDF">
-                <label for="name">Nombre:</label>
-                <input type="text" id="name" v-model="name"><br><br>
-                <label for="age">Edad:</label>
-                <input type="number" id="age" v-model="age"><br><br>
-                <span v-if="errors.length" class="error">
-                    <strong>Por favor corrige los siguientes errores:</strong>
-                    <ul>
-                        <li v-for="error in errors">{{ error }}</li>
-                    </ul>
-                </span>
-                <input type="submit" value="Generar">
-            </form>
+            <app-form></app-form>
         </div>
 
         <script>
-            new Vue({
-                el: '#app',
-                data: {
-                    message: 'Generandor de una Receta Médica',
-                    name: '',
-                    age: null,
-                    errors: [],
-                    currentDate: new Date().toLocaleDateString()
+            Vue.component('app-form', {
+                template: `
+                    <div>
+                        <h1>{{ message }}</h1>
+                        <form @submit.prevent="generatePDF">
+                            <label for="name">Nombre:</label>
+                            <input type="text" id="name" v-model="name"><br><br>
+                            <label for="age">Edad:</label>
+                            <input type="number" id="age" v-model="age"><br><br>
+                            <span v-if="errors.length" class="error">
+                                <strong>Por favor corrige los siguientes errores:</strong>
+                                <ul>
+                                    <li v-for="error in errors">{{ error }}</li>
+                                </ul>
+                            </span>
+                            <input type="submit" value="Generar">
+                        </form>
+                    </div>
+                `,
+                data() {
+                    return {
+                        message: 'Generandor de una Receta Médica',
+                        name: '',
+                        age: null,
+                        errors: [],
+                        currentDate: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                    };
                 },
                 methods: {
                     validateForm() {
@@ -119,17 +125,55 @@
                             const element = document.createElement('div');
                             element.innerHTML = `
                                 <h1>Receta Médica</h1>
-                                <p>Fecha: ${this.currentDate}</p>
-                                <table>
-                                    <tr><th>Campo</th><th>Valor</th></tr>
-                                    <tr><td>Nombre</td><td>${this.name}</td></tr>
-                                    <tr><td>Edad</td><td>${this.age}</td></tr>
-                                </table>
+                                <h2>Dr. Juan Pérez</h2>
+                                <img src="logo.png" alt="Logotipo" style="width: 100px;">
+                                <p>Cédula Profesional: 1234567</p>
+                                <p>Especialidad: Medicina General</p>
+                                <p>Dirección: Calle Falsa 123, Ciudad, País</p>
+                                <p>Contacto: +123456789</p>
+                                <hr>
+                                <h3>Datos del Paciente</h3>
+                                <p>Nombre: ${this.name}</p>
+                                <p>Edad: ${this.age}</p>
+                                <p>Fecha de emisión: ${this.currentDate}</p>
+                                <hr>
+                                <h3>Indicación del Medicamento</h3>
+                                <p>Nombre Genérico: __________</p>
+                                <p>Forma Farmacéutica: __________</p>
+                                <p>Dosis: __________</p>
+                                <p>Vía de Administración: __________</p>
+                                <p>Frecuencia: __________</p>
+                                <p>Duración del Tratamiento: __________</p>
+                                <hr>
+                                <h3>Indicaciones Adicionales</h3>
+                                <p>Recomendaciones: __________</p>
+                                <p>Cuidados Especiales: __________</p>
+                                <hr>
+                                <h3>Firma y Sello del Médico</h3>
+                                <p>_________________________</p>
+                                <p>Firma</p>
+                                <p>Sello</p>
+                                <hr>
+                                <h3>Espacio para Farmacia</h3>
+                                <p>Medicamento Entregado: __________</p>
+                                <p>Fecha: __________</p>
+                                <p>Firma del Farmacéutico: __________</p>
                             `;
-                            html2pdf().from(element).save('receta_medica.pdf');
+                            const opt = {
+                                margin: 1,
+                                filename: 'receta_medica.pdf',
+                                image: { type: 'jpeg', quality: 0.98 },
+                                html2canvas: { scale: 2 },
+                                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                            };
+                            html2pdf().from(element).set(opt).save();
                         }
                     }
                 }
+            });
+
+            new Vue({
+                el: '#app'
             });
         </script>
     </body>
