@@ -5,175 +5,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Bienvenida</title>
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-        <style>
-            body {
-                font-family: 'Helvetica Neue', Arial, sans-serif;
-                font-size: 16px;
-                background-color: #f4f4f4;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-            }
-            #app {
-                background-color: #fff;
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-            h1 {
-                color: #333;
-                text-align: center;
-            }
-            form {
-                display: flex;
-                flex-direction: column;
-            }
-            label {
-                margin-bottom: 5px;
-                color: #555;
-            }
-            input[type="text"],
-            input[type="number"] {
-                padding: 10px;
-                margin-bottom: 15px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-            }
-            input[type="submit"] {
-                padding: 10px 15px;
-                background-color: #28a745;
-                color: #fff;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-            input[type="submit"]:hover {
-                background-color: #218838;
-            }
-            .error {
-                color: red;
-                margin-bottom: 15px;
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 20px;
-                font-size: 14px;
-            }
-            th, td {
-                padding: 10px;
-                border: 1px solid #ccc;
-                text-align: left;
-            }
-            th {
-                background-color: #f8f8f8;
-                font-weight: bold;
-            }
-        </style>
+        <script type="module" src="./AppForm.vue"></script>
     </head>
     <body>
         <div id="app">
             <app-form></app-form>
         </div>
 
-        <script>
-            Vue.component('app-form', {
-                template: `
-                    <div>
-                        <h1>{{ message }}</h1>
-                        <form @submit.prevent="generatePDF">
-                            <label for="name">Nombre:</label>
-                            <input type="text" id="name" v-model="name"><br><br>
-                            <label for="age">Edad:</label>
-                            <input type="number" id="age" v-model="age"><br><br>
-                            <span v-if="errors.length" class="error">
-                                <strong>Por favor corrige los siguientes errores:</strong>
-                                <ul>
-                                    <li v-for="error in errors">{{ error }}</li>
-                                </ul>
-                            </span>
-                            <input type="submit" value="Generar">
-                        </form>
-                    </div>
-                `,
-                data() {
-                    return {
-                        message: 'Generandor de una Receta Médica',
-                        name: '',
-                        age: null,
-                        errors: [],
-                        currentDate: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })
-                    };
-                },
-                methods: {
-                    validateForm() {
-                        this.errors = [];
-                        if (!this.name) {
-                            this.errors.push("El nombre es obligatorio.");
-                        }
-                        if (!this.age) {
-                            this.errors.push("La edad es obligatoria.");
-                        }
-                        return this.errors.length === 0;
-                    },
-                    generatePDF() {
-                        if (this.validateForm()) {
-                            const element = document.createElement('div');
-                            element.innerHTML = `
-                                <h1>Receta Médica</h1>
-                                <h2>Dr. Juan Pérez</h2>
-                                <img src="logo.png" alt="Logotipo" style="width: 100px;">
-                                <p>Cédula Profesional: 1234567</p>
-                                <p>Especialidad: Medicina General</p>
-                                <p>Dirección: Calle Falsa 123, Ciudad, País</p>
-                                <p>Contacto: +123456789</p>
-                                <hr>
-                                <h3>Datos del Paciente</h3>
-                                <p>Nombre: ${this.name}</p>
-                                <p>Edad: ${this.age}</p>
-                                <p>Fecha de emisión: ${this.currentDate}</p>
-                                <hr>
-                                <h3>Indicación del Medicamento</h3>
-                                <p>Nombre Genérico: __________</p>
-                                <p>Forma Farmacéutica: __________</p>
-                                <p>Dosis: __________</p>
-                                <p>Vía de Administración: __________</p>
-                                <p>Frecuencia: __________</p>
-                                <p>Duración del Tratamiento: __________</p>
-                                <hr>
-                                <h3>Indicaciones Adicionales</h3>
-                                <p>Recomendaciones: __________</p>
-                                <p>Cuidados Especiales: __________</p>
-                                <hr>
-                                <h3>Firma y Sello del Médico</h3>
-                                <p>_________________________</p>
-                                <p>Firma</p>
-                                <p>Sello</p>
-                                <hr>
-                                <h3>Espacio para Farmacia</h3>
-                                <p>Medicamento Entregado: __________</p>
-                                <p>Fecha: __________</p>
-                                <p>Firma del Farmacéutico: __________</p>
-                            `;
-                            const opt = {
-                                margin: 1,
-                                filename: 'receta_medica.pdf',
-                                image: { type: 'jpeg', quality: 0.98 },
-                                html2canvas: { scale: 2 },
-                                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-                            };
-                            html2pdf().from(element).set(opt).save();
-                        }
-                    }
-                }
-            });
+        <script type="module">
+            import AppForm from './AppForm.vue';
 
             new Vue({
-                el: '#app'
+                el: '#app',
+                components: {
+                    'app-form': AppForm
+                }
             });
         </script>
     </body>
